@@ -42,7 +42,7 @@
 
    <!-- Actions -->
    <HBox spacing="8" alignment="CENTER_RIGHT" maxWidth="Infinity">
-      <Button text="Register" fx:id="registerButton"/>
+      <Button text="Register" fx:id="registerButton" onAction="#handleRegister"/>
       <Button text="Login" fx:id="loginButton" onAction="#handleLogin" defaultButton="true"/>
    </HBox>
 </VBox>

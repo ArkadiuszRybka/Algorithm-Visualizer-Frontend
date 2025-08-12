@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -19,10 +20,9 @@ import java.net.http.HttpResponse;
 import java.util.Optional;
 
 public class LoginController {
-    @FXML
-    private TextField loginField;
-    @FXML
-    private PasswordField passwordField;
+    @FXML private TextField loginField;
+    @FXML private PasswordField passwordField;
+    @FXML private Button registerButton;
 
     public void initialize(){
         loginField.setText("zbyszek@gmail.com");
@@ -73,12 +73,27 @@ public class LoginController {
         if(login == null || login.trim().isEmpty()) return Optional.of("Email cannot be empty");
         if(!isValidEmail(login)) return Optional.of("Invalid email format");
         if(password == null || password.trim().isEmpty()) return Optional.of("Password cannot be empty");
-        if(password.length() < 8 ) return Optional.of("Password must be at least 7 characters");
         return Optional.empty();
     }
 
     private boolean isValidEmail(String login){
         return login.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    }
+
+    @FXML
+    private void handleRegister() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/algorithmvisualizerfrontend/register-view.fxml"));
+            Parent registerRoot = fxmlLoader.load();
+            Stage currentStage = (Stage) registerButton.getScene().getWindow();
+            currentStage.setScene(new Scene(registerRoot));
+            currentStage.setTitle("Register");
+            currentStage.centerOnScreen();
+            currentStage.show();
+        } catch (Exception e) {
+            showAlert("Error: " + e.getMessage());
+        }
+
     }
 
     private void switchToDashboard(){
