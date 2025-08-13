@@ -2,6 +2,7 @@ package com.example.algorithmvisualizerfrontend.controller;
 
 import com.example.algorithmvisualizerfrontend.model.AlgorithmDto;
 import com.example.algorithmvisualizerfrontend.model.ProgressSummaryDto;
+import com.example.algorithmvisualizerfrontend.model.QuizQuestionDto;
 import com.example.algorithmvisualizerfrontend.util.SessionContext;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -256,14 +258,60 @@ public class DashboardController {
         showInfo("Start animacji: " + selected.getName());
     }
 
+    @FXML
     private void handleStartQuiz() {
         AlgorithmDto selected = algorithmComboBox.getValue();
         if (selected == null) {
             showInfo("Wybierz algorytm z listy.");
             return;
         }
-        // TODO: przejście do widoku quizu dla selected.getId()
-        showInfo("Start quizu dla: " + selected.getName());
+
+        List<QuizQuestionDto> questions = List.of();
+        try {
+            questions = fetchQuizQuestions(selected.getId());
+        } catch (Exception e){
+            showError("Could not load quiz " + e.getMessage());
+            return;
+        }
+
+        openQuizWindow(selected.getName(), selected.getId(), questions);
+    }
+
+    private List<QuizQuestionDto> fetchQuizQuestions(Long algorithmId) throws Exception{
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/quiz/"+algorithmId))
+                .header("Authorization", "Bearer " + SessionContext.getToken())
+                .GET()
+                .build();
+
+        HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
+        if(response.statusCode() != 200){
+            showError("Http " + response.statusCode() + " " + response.body());
+        }
+
+        return MAPPER.readValue(response.body(), new TypeReference<List<QuizQuestionDto>>() {});
+    }
+
+    private void openQuizWindow(String algorithmName, long algorithmId, List<QuizQuestionDto> questions){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/algorithmvisualizerfrontend/quiz-view.fxml"));
+            Parent quizRoot = fxmlLoader.load();
+
+            QuizController quizController = fxmlLoader.getController();
+            quizController.setup(algorithmName, algorithmId, questions);
+
+            Stage stage = new Stage();
+            stage.setTitle(algorithmName + " Quiz");
+            stage.setScene(new Scene(quizRoot));
+            stage.centerOnScreen();
+            stage.initOwner(animationButton.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setResizable(true);
+
+            stage.showAndWait();
+        }catch (Exception e) {
+            showError("Could not load quizes " + e.getMessage());
+        }
     }
 
     @FXML
