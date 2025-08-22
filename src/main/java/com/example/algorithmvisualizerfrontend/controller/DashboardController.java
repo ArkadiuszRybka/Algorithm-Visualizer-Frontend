@@ -132,7 +132,7 @@ public class DashboardController {
             @Override protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null : item);
-                setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 11px;"); // monospaced look
+                setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 11px;");
             }
         });
     }
@@ -298,7 +298,7 @@ public class DashboardController {
             Parent quizRoot = fxmlLoader.load();
 
             QuizController quizController = fxmlLoader.getController();
-            quizController.setup(algorithmName, algorithmId, questions);
+            quizController.setup(algorithmName, algorithmId, questions, this::refreshAfterQuiz);
 
             Stage stage = new Stage();
             stage.setTitle(algorithmName + " Quiz");
@@ -312,6 +312,15 @@ public class DashboardController {
         }catch (Exception e) {
             showError("Could not load quizes " + e.getMessage());
         }
+    }
+
+    private void refreshAfterQuiz() {
+        fetchProgressSummary()
+                .thenAccept(summary -> Platform.runLater(() -> updateProgressUI(summary)))
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> showError("Could not refresh progress: " + ex.getMessage()));
+                    return null;
+                });
     }
 
     @FXML
