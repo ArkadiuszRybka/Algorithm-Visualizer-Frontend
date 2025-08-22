@@ -5,10 +5,13 @@ module com.example.algorithmvisualizerfrontend {
     requires org.json;
     requires com.fasterxml.jackson.databind;
     requires static lombok;
+    requires java.desktop;
 
 
     opens com.example.algorithmvisualizerfrontend to javafx.fxml;
     opens com.example.algorithmvisualizerfrontend.controller to javafx.fxml;
     opens com.example.algorithmvisualizerfrontend.model to com.fasterxml.jackson.databind;
     exports com.example.algorithmvisualizerfrontend;
+    exports com.example.algorithmvisualizerfrontend.controller;
+    exports com.example.algorithmvisualizerfrontend.model;
 }

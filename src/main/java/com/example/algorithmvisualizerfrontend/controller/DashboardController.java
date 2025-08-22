@@ -23,11 +23,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class DashboardController {
     @FXML private ComboBox<AlgorithmDto> algorithmComboBox;
@@ -248,14 +250,57 @@ public class DashboardController {
         dialog.showAndWait().ifPresent(text -> inputField.setText(text));
     }
 
+    @FXML
     private void handleStartAnimation() {
         AlgorithmDto selected = algorithmComboBox.getValue();
         if (selected == null) {
-            showInfo("Wybierz algorytm z listy.");
+            showInfo("Select algorithm first.");
             return;
         }
-        // TODO: przejście do widoku animacji i przekazanie selected, inputField.getText()
-        showInfo("Start animacji: " + selected.getName());
+
+        List<Integer> numbers;
+        try {
+            numbers = parseInput(inputField.getText());
+            if (numbers.isEmpty()) {
+                showInfo("Enter input data (comma separated numbers).");
+                return;
+            }
+        } catch (Exception ex) {
+            showError("Invalid input: " + ex.getMessage());
+            return;
+        }
+
+        try {
+            openAnimationWindow(selected, numbers);
+        } catch (Exception e) {
+            showError("Failed to open animation window: " + e.getMessage());
+        }
+    }
+
+    private void openAnimationWindow(AlgorithmDto selected, List<Integer> numbers) throws Exception {
+        FXMLLoader fxml = new FXMLLoader(getClass().getResource("/com/example/algorithmvisualizerfrontend/animation-view.fxml"));
+        Parent root = fxml.load();
+        AnimationController controller = fxml.getController();
+        controller.setup(selected, numbers);
+
+        Stage stage = new Stage();
+        stage.setTitle(selected.getName() + " - Animation");
+        stage.setScene(new Scene(root, 900, 520));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(animationButton.getScene().getWindow());
+        stage.setMinWidth(700);
+        stage.setMinHeight(420);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+    private List<Integer> parseInput(String text) {
+        if (text == null || text.isBlank()) return List.of();
+        return Arrays.stream(text.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
     }
 
     @FXML

@@ -49,7 +49,7 @@
             </HBox>
 
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Button fx:id="animationButton" text="Start Animation" />
+                <Button fx:id="animationButton" onAction="#handleStartAnimation" text="Start Animation" />
                 <Button fx:id="quizButton" onAction="#handleStartQuiz" text="Start Quiz" />
                 <Button fx:id="generateButton" onAction="#handleGenerate" text="Generate data" />
             </HBox>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.algorithmvisualizerfrontend.controller.AnimationController">
+    <top>
+        <HBox alignment="CENTER" spacing="12" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="startButton" text="Start" onAction="#onStart"/>
+                <Button fx:id="pauseButton" text="Pause" onAction="#onPause" disable="true"/>
+                <Button fx:id="unpauseButton" text="Unpause" onAction="#onUnpause" disable="true"/>
+                <Button fx:id="resetButton" text="Reset" onAction="#onReset"/>
+                <Separator orientation="VERTICAL"/>
+                <Label text="Speed"/>
+                <Slider fx:id="speedSlider" min="0.25" max="2.0" value="0.60" prefWidth="160"/>
+                <Label fx:id="speedValueLabel" minWidth="52" alignment="CENTER_RIGHT"/>
+            </children>
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER">
+            <content>
+                <HBox fx:id="barsBox" alignment="BOTTOM_CENTER" spacing="10">
+                    <padding>
+                        <Insets top="16" right="16" bottom="16" left="16"/>
+                    </padding>
+                </HBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="16" alignment="CENTER">
+            <children>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <children>
+                        <Rectangle fx:id="legendDefaultRect" width="16" height="16" arcWidth="4" arcHeight="4"/>
+                        <Label text="Default"/>
+                    </children>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <children>
+                        <Rectangle fx:id="legendActiveRect" width="16" height="16" arcWidth="4" arcHeight="4"/>
+                        <Label text="Active"/>
+                    </children>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <children>
+                        <Rectangle fx:id="legendSwapRect" width="16" height="16" arcWidth="4" arcHeight="4"/>
+                        <Label text="Swap"/>
+                    </children>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <children>
+                        <Rectangle fx:id="legendSortedRect" width="16" height="16" arcWidth="4" arcHeight="4"/>
+                        <Label text="Sorted"/>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets top="8" right="10" bottom="12" left="10"/>
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>

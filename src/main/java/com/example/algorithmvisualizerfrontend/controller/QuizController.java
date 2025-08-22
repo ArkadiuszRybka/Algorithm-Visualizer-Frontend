@@ -103,9 +103,6 @@ public class QuizController {
 
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("status " + response.statusCode());
-            System.out.println("body " + response.body());
-
             if(response.statusCode() == 200){
                 QuizResultDto result = MAPPER.readValue(response.body(), QuizResultDto.class);
                 showInfo("Result: " + result.getCorrectAnswers() + "/" + result.getTotalQuestions());
